@@ -44,6 +44,20 @@ policy = BanditPolicy(evaluation_interval=2, slack_factor=0.1)
 ```
 ## AutoML
 
+For performing the AutoML I have used the following configuration
+```python
+automl_config = AutoMLConfig(
+    experiment_timeout_minutes=30,
+    task='classification',
+    primary_metric='accuracy',
+    training_data=dataset,
+    label_column_name='y',
+    compute_target = cpu_cluster,
+    n_cross_validations=4)
+```
+I have chosen `accuracy` as the metric for determining the best models. The data passed for training is a 
+`Dataset.Tabular` class derived from the pandas dataframe returned from `clean_data()`. 
+
 Among the basket of ensemble models the AutoML was able to identify `VotingEnsemble` as the optimum model. The accuracy 
 associated with the model is `0.918` 
 ## Pipeline comparison
@@ -63,3 +77,13 @@ method would be an interesting experiment. This would help identify any other sp
 missed by the RandomSampling. In case of AutoML, based on the basket of models executed, increasing cross validation and
 blocking low performing model might give a better outlook of features. 
 
+## Proof of cluster clean up
+
+```python
+try:
+    cpu_cluster = ComputeTarget(workspace=ws, name=cpu_cluster_name)
+    print("Found existing cluster, deleting it....")
+    cpu_cluster.delete(wait_for_completion=True, show_output=True)
+except ComputeTargetException:
+    print("Cluster not found.")
+```
