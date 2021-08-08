@@ -83,7 +83,7 @@ blocking low performing model might give a better outlook of features.
 try:
     cpu_cluster = ComputeTarget(workspace=ws, name=cpu_cluster_name)
     print("Found existing cluster, deleting it....")
-    cpu_cluster.delete(wait_for_completion=True, show_output=True)
+    cpu_cluster.delete()
 except ComputeTargetException:
     print("Cluster not found.")
 ```
